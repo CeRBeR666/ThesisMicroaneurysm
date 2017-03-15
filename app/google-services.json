@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "124930725265",
+    "firebase_url": "https://tezfirebaseproject.firebaseio.com",
+    "project_id": "tezfirebaseproject",
+    "storage_bucket": "tezfirebaseproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124930725265:android:7cbed98e0931a900",
+        "android_client_info": {
+          "package_name": "com.agaoglu.tez"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "124930725265-e3nlim8mv8gv7inor55qbgg5bsscr1oe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.agaoglu.tez",
+            "certificate_hash": "ecf8c468179cddfd959df5354458c6dbf9a4d17a"
+          }
+        },
+        {
+          "client_id": "124930725265-e4ab8js8c573ie54r2p7mp00couupiqh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAokoxnz3DKhbPZtwuqRBJuD1qAgqX7PU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "124930725265-e4ab8js8c573ie54r2p7mp00couupiqh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

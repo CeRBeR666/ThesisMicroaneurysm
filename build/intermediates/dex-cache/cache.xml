@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\95209b450d6dcaca0e8db3090ac2078fae3cb4ea\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bd75f9f0296fe220da6d0ad961831b04541c4452">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_42d5e344dd5588f7b98d804906b9d2af633c862a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="61a1c2b9c4b7d5ef370d08425ad7d3a664bb3542">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_0c91c3d7972dc21590c97fee00b6ff650939e3b7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\55eec4c685fea405fab3aec047e2b932272042e0\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="a61e7010aa7be5da53cd1bc5279630510c9a4912">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_bedadcd2cb9338cd8667e280fa1eaf6110e528ce\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c82741bc129dd5f99f11a4ab8666ae24262053b6">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_64e18e56d5ced0bbe062218a0afb226c18bc288f\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\c6d02a2feae479e7fad6a0076af3bd2bb1002cee\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e7157a9577c983651d6c6ee313813424fe2d8ab6">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c0c81d421f28db820c333fecd0f31f556b484a2a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\f0c8f1c4dc8826e0bde2e04807aa9847a34b9b9b\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1ac56e5801e986583cbe27f2cce57f626cc7ff93">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_bf2ffdab5ca961ff4efad643e3823921907ef9a7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\78625e5ea23ae842a918ab1115dab8974b99fb22\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="94fca868854457ede6df15c902938468c71d579e">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_502b3a3ef30df7b4b063dfe8802573df61f5703d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\7016c377faeca5b1e2c8e42a5edf279a4e412c8a\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3d6951cb416ebf8c66a32b9480808ca247b68344">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_b74f7ebfc3ba22597c8b3ffa768e780f6f456f66\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\6d207df2e5bef313ef1a8e8d7fdc5310eca436ef\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3d13e510077b35fe8e49930a627dd849ad5da0dc">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c44c3256c98b3a7b4543189ec5dd5a08cb7b25c9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\c493ba20e1d5246c62f297351c47ddd05c75f1b0\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ce9112e08a027c8620ae693983e38cdbb9f6371b">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_ded29fb44c3f1c198888132af3e3f623e0eb1893\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\eba913ebb228f8400f32e7c3a6ac82014a55930d\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="0e301f24b283f14b564f660c9abe863af6be5896">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_3a13b5be2f9288971306467d4ba2fcff7bca1c64\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Volkan\.android\build-cache\50918067a0cc0ea050df73b65031a139e956fb5c\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="0d5cbbbfe040201c7569478b70a13b58fd11aab4">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_580249ff4639610b8ee012d09321b8884262611f\classes.dex" />
+    </item>
+
+</items>
