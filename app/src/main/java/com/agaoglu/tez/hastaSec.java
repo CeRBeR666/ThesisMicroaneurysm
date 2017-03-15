@@ -23,7 +23,8 @@ import java.util.List;
 
 
 public class hastaSec extends Fragment {
-
+    private DatabaseReference hastaDB;
+    private List<hasta> kayitlar;
 
 
     public hastaSec() {
@@ -34,21 +35,51 @@ public class hastaSec extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hasta_sec, container, false);
 
+        kayitlar = new ArrayList<>();
+        hastaDB = FirebaseDatabase.getInstance().getReference("hastalar");
 
-        List<hasta> kayitlar = tum_katilar();
-
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.hastaseclist);
-        hastasecadapter adapter = new hastasecadapter(kayitlar, getActivity());
+        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.hastaseclist);
+        final hastasecadapter adapter = new hastasecadapter(kayitlar, getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+        hastaDB.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot != null && dataSnapshot.getValue() != null) {
+                    hasta hasta = dataSnapshot.getValue(com.agaoglu.tez.hasta.class);
+                    kayitlar.add(hasta);
+                    Log.e("test",kayitlar.toString());
+                    recyclerView.scrollToPosition(kayitlar.size() - 1);
+                    adapter.notifyItemInserted(kayitlar.size() - 1);
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         return view;
     }
 
-    private List<hasta> tum_katilar() {
-        List<hasta> data = new ArrayList<>();
-        data.add(new hasta("Testinggg","","",""));
-        data.add(new hasta("Test","","",""));
-        data.add(new hasta("Test2","","",""));
-        return data;
-    }
+
+
+
 }
