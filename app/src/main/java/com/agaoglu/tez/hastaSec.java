@@ -47,8 +47,8 @@ public class hastaSec extends Fragment {
     private List<hasta> tum_katilar() {
         List<hasta> data = new ArrayList<>();
         data.add(new hasta("Testinggg","","",""));
-        data.add(new hasta("Enını amı","","",""));
-        data.add(new hasta("Ebenin amı","","",""));
+        data.add(new hasta("Test","","",""));
+        data.add(new hasta("Test2","","",""));
         return data;
     }
 }
