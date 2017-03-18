@@ -39,7 +39,6 @@ public class AnaSayfa extends AppCompatActivity {
                 case R.id.navigation_hastasec:
                     fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.content,hastasec).commit();
-
                     return true;
             }
             return true;
@@ -53,12 +52,5 @@ public class AnaSayfa extends AppCompatActivity {
         setContentView(R.layout.activity_ana_sayfa);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.action, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 }

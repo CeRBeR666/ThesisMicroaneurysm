@@ -4,10 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,6 +39,8 @@ public class hastaSec extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hasta_sec, container, false);
+        getActivity().setTitle("Hasta Seç");
+        setHasOptionsMenu(true);
 
         kayitlar = new ArrayList<>();
         hastaDB = FirebaseDatabase.getInstance().getReference("hastalar");
@@ -60,7 +67,6 @@ public class hastaSec extends Fragment {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.e("bişeyler kalktı","kalktı gitti");
                 hasta hasta = dataSnapshot.getValue(com.agaoglu.tez.hasta.class);
                 adapter.remove(hasta);
             }
@@ -78,7 +84,23 @@ public class hastaSec extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.action,menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction;
+        final Fragment hastakaydet = new hastaKaydet();
 
-
+        switch (item.getItemId()){
+            case R.id.optionhastaekle:
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.content,hastakaydet).commit();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
