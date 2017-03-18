@@ -1,6 +1,10 @@
 package com.agaoglu.tez;
 
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -10,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.google.firebase.database.DataSnapshot;
@@ -17,6 +22,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.IOException;
 
 
 /**
@@ -30,12 +39,17 @@ public class hastaKaydet extends Fragment {
     }
 
     private DatabaseReference hastaDB;
+    private static final int REQUEST_CODE = 1;
+    private Bitmap bitmap;
+    private ImageView imageView;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hasta_kaydet, container, false);
         getActivity().setTitle("Hasta Kaydet");
+
 
         //Hasta bilgilerini Firebase e yazalım sonra liste yapıp okuyalım.
 
@@ -47,9 +61,22 @@ public class hastaKaydet extends Fragment {
         final EditText hastaadres = (EditText) view.findViewById(R.id.adresttxt);
         final EditText hastatelefon = (EditText) view.findViewById(R.id.telefontxt);
         final Spinner cinsiyet = (Spinner) view.findViewById(R.id.cinsiyet);
-        Button hastaKaydet = (Button) view.findViewById(R.id.hastKaydet);
+        final Button hastaKaydet = (Button) view.findViewById(R.id.hastKaydet);
+        Button fotocek = (Button) view.findViewById(R.id.hastFoto);
 
         hastaKaydet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(hastaismi.getText().toString().length() == 0){
+                    hastaismi.setError("Hasta İsmini Girmelisiniz.");
+                }
+                else{
+                    HastaKaydet(hastaismi.getText().toString(),hastadogtar.getText().toString(),hastaadres.getText().toString(),hastatelefon.getText().toString(),cinsiyet.getItemAtPosition(cinsiyet.getSelectedItemPosition()).toString());
+                }
+            }
+        });
+
+        fotocek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(hastaismi.getText().toString().length() == 0){
@@ -69,7 +96,7 @@ public class hastaKaydet extends Fragment {
         hasta.setDogtar(dogtar);
         hasta.setAdres(adres);
         hasta.setTelefon(telefon);
-        if (cinsiyet.toString() != "Seçiniz"){
+        if (!cinsiyet.toString().equals("Seçiniz")){
             hasta.setCinsiyet(cinsiyet);
         }else{
             hasta.setCinsiyet("");
@@ -89,6 +116,7 @@ public class hastaKaydet extends Fragment {
                 Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.form),kayit.isim + " isimli hasta kaydedildi", Snackbar.LENGTH_LONG);
                 snackbar.show();
                 clearForm((ViewGroup) getActivity().findViewById(R.id.form));
+
             }
 
             @Override
