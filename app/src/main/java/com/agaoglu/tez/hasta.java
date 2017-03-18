@@ -9,16 +9,18 @@ public class hasta {
     public String dogtar;
     public String adres;
     public String telefon;
+    public String cinsiyet;
 
     public hasta(){
 
     }
 
-    public hasta(String isim, String dogtar, String adres, String telefon){
+    public hasta(String isim, String dogtar, String adres, String telefon, String cinsiyet){
         this.isim = isim;
         this.dogtar = dogtar;
         this.adres = adres;
         this.telefon = telefon;
+        this.cinsiyet = cinsiyet;
     }
 
     public void setIsim(String isim) {
@@ -51,5 +53,13 @@ public class hasta {
 
     public String getTelefon() {
         return telefon;
+    }
+
+    public String getCinsiyet() {
+        return cinsiyet;
+    }
+
+    public void setCinsiyet(String cinsiyet) {
+        this.cinsiyet = cinsiyet;
     }
 }

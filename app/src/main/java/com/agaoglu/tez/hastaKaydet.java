@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,6 +46,7 @@ public class hastaKaydet extends Fragment {
         final EditText hastadogtar = (EditText) view.findViewById(R.id.dogtartxt);
         final EditText hastaadres = (EditText) view.findViewById(R.id.adresttxt);
         final EditText hastatelefon = (EditText) view.findViewById(R.id.telefontxt);
+        final Spinner cinsiyet = (Spinner) view.findViewById(R.id.cinsiyet);
         Button hastaKaydet = (Button) view.findViewById(R.id.hastKaydet);
 
         hastaKaydet.setOnClickListener(new View.OnClickListener() {
@@ -54,19 +56,25 @@ public class hastaKaydet extends Fragment {
                     hastaismi.setError("Hasta İsmini Girmelisiniz.");
                 }
                 else{
-                    HastaKaydet(hastaismi.getText().toString(),hastadogtar.getText().toString(),hastaadres.getText().toString(),hastatelefon.getText().toString());
+                    HastaKaydet(hastaismi.getText().toString(),hastadogtar.getText().toString(),hastaadres.getText().toString(),hastatelefon.getText().toString(),cinsiyet.getItemAtPosition(cinsiyet.getSelectedItemPosition()).toString());
                 }
             }
         });
         return view;
     }
 
-    private void HastaKaydet(String isim, String dogtar, final String adres, String telefon){
+    private void HastaKaydet(String isim, String dogtar, final String adres, String telefon, String cinsiyet){
         final hasta hasta = new hasta();
         hasta.setIsim(isim);
         hasta.setDogtar(dogtar);
         hasta.setAdres(adres);
         hasta.setTelefon(telefon);
+        if (cinsiyet.toString() != "Seçiniz"){
+            hasta.setCinsiyet(cinsiyet);
+        }else{
+            hasta.setCinsiyet("");
+        }
+
         //Bir primary key alıyoruz
         String hastaid = hastaDB.push().getKey();
         //Primary key le birlikte hasta class ında tuttuğum datayı internete basıyoruz

@@ -1,9 +1,17 @@
 <resources>
-    <string name="app_name">Tez</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="app_name">Detect Microaneurysm</string>
+    <string name="title_home">AnaSayfa</string>
+    <string name="title_tetkikler">Tetkikler</string>
+    <string name="title_hasta_sec">Hasta Seç</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_deneme">Deneme</string>
+
+    <string-array name="cinsiyet">
+        <item>Seçiniz</item>
+        <item>Kadın</item>
+        <item>Erkek</item>
+        <item>Diğer</item>
+    </string-array>
 </resources>

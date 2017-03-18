@@ -3,9 +3,12 @@ package com.agaoglu.tez;
 import android.content.Context;
 import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,11 +38,14 @@ public class hastasecadapter extends RecyclerView.Adapter<hastasecholder> {
     @Override
     public void onBindViewHolder(hastasecholder holder, int position) {
         holder.hastaisim.setText(list.get(position).getIsim());
+        holder.hastacinsiyet.setText(list.get(position).getCinsiyet());
+        holder.hastadogtar.setText(list.get(position).getDogtar());
+
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return this.list.size();
     }
 
     @Override
@@ -53,8 +59,8 @@ public class hastasecadapter extends RecyclerView.Adapter<hastasecholder> {
     }
 
     public void remove(hasta hasta){
-        int position = list.indexOf(hasta);
-        list.remove(position);
-        notifyItemRemoved(position);
+        list.remove(hasta);
     }
+
+
 }

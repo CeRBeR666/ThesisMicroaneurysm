@@ -49,10 +49,7 @@ public class hastaSec extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot != null && dataSnapshot.getValue() != null) {
                     hasta hasta = dataSnapshot.getValue(com.agaoglu.tez.hasta.class);
-                    kayitlar.add(hasta);
-                    Log.e("test",kayitlar.toString());
-                    recyclerView.scrollToPosition(kayitlar.size() - 1);
-                    adapter.notifyItemInserted(kayitlar.size() - 1);
+                    adapter.insert(0,hasta);
                 }
             }
 
@@ -63,7 +60,9 @@ public class hastaSec extends Fragment {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                    Log.e("bişeyler kalktı","kalktı gitti");
+                hasta hasta = dataSnapshot.getValue(com.agaoglu.tez.hasta.class);
+                adapter.remove(hasta);
             }
 
             @Override
