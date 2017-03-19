@@ -1,11 +1,15 @@
 package com.agaoglu.tez;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +35,7 @@ import java.util.List;
 public class hastaSec extends Fragment {
     private DatabaseReference hastaDB;
     private List<hasta> kayitlar;
+    private ProgressDialog Dialog;
 
 
     public hastaSec() {
@@ -46,9 +52,14 @@ public class hastaSec extends Fragment {
         hastaDB = FirebaseDatabase.getInstance().getReference("hastalar");
 
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.hastaseclist);
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         final hastasecadapter adapter = new hastasecadapter(kayitlar, getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        Dialog = new ProgressDialog(getActivity());
+        Dialog.setMessage("Hastalar Yükleniyor");
+        Dialog.show();
 
 
         hastaDB.addChildEventListener(new ChildEventListener() {
@@ -62,13 +73,11 @@ public class hastaSec extends Fragment {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                hasta hasta = dataSnapshot.getValue(com.agaoglu.tez.hasta.class);
-                adapter.remove(hasta);
+
             }
 
             @Override
@@ -81,8 +90,39 @@ public class hastaSec extends Fragment {
 
             }
         });
+
+        hastaDB.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Dialog.hide();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.form)," Bir hata oluştu", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshItems();
+            }
+
+            private void refreshItems() {
+                //// TODO: 18.03.2017 Aşağıya çekince güncelleme yapılacak. Bu kısımda biraz sıkıntı var
+                onItemsLoadComplete();
+            }
+
+            private void onItemsLoadComplete() {
+                swipeRefreshLayout.setRefreshing(false);
+            }   
+        });
         return view;
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -103,4 +143,7 @@ public class hastaSec extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }

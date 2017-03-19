@@ -2,10 +2,19 @@ package com.agaoglu.tez;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.SystemClock;
+import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -23,7 +32,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -42,7 +54,8 @@ public class hastaKaydet extends Fragment {
     private static final int REQUEST_CODE = 1;
     private Bitmap bitmap;
     private ImageView imageView;
-
+    private String kullanicisecimi;
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,6 +67,7 @@ public class hastaKaydet extends Fragment {
         //Hasta bilgilerini Firebase e yazalım sonra liste yapıp okuyalım.
 
         hastaDB = FirebaseDatabase.getInstance().getReference("hastalar");
+
 
 
         final EditText hastaismi = (EditText) view.findViewById(R.id.isimtxt);
@@ -79,12 +93,7 @@ public class hastaKaydet extends Fragment {
         fotocek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hastaismi.getText().toString().length() == 0){
-                    hastaismi.setError("Hasta İsmini Girmelisiniz.");
-                }
-                else{
-                    HastaKaydet(hastaismi.getText().toString(),hastadogtar.getText().toString(),hastaadres.getText().toString(),hastatelefon.getText().toString(),cinsiyet.getItemAtPosition(cinsiyet.getSelectedItemPosition()).toString());
-                }
+
             }
         });
         return view;
@@ -116,9 +125,7 @@ public class hastaKaydet extends Fragment {
                 Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.form),kayit.isim + " isimli hasta kaydedildi", Snackbar.LENGTH_LONG);
                 snackbar.show();
                 clearForm((ViewGroup) getActivity().findViewById(R.id.form));
-
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("hata","sebebini bilmediğimiz bir hata oluştu");
@@ -139,5 +146,6 @@ public class hastaKaydet extends Fragment {
                 clearForm((ViewGroup)view);
         }
     }
+
 
 }

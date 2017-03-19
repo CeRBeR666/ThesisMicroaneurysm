@@ -119,14 +119,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Foto Çek" />
-                    <Button
-                        android:id="@+id/hastKart"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Karttan Seç" />
+                        android:text="Kaydet ve İşle" />
+
                 </LinearLayout>
 
 

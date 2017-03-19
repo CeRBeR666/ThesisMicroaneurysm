@@ -1,5 +1,6 @@
 package com.agaoglu.tez;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -27,14 +28,12 @@ public class AnaSayfa extends AppCompatActivity {
             final Fragment hastasec = new hastaSec();
             final Fragment hastakaydet = new hastaKaydet();
 
-
-
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     return true;
                 case R.id.navigation_tetkikler:
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.content,hastakaydet).commit();
+                    Intent resimIsle = new Intent(getApplicationContext(),resimIsle.class);
+                    startActivity(resimIsle);
                     return true;
                 case R.id.navigation_hastasec:
                     fragmentTransaction = fragmentManager.beginTransaction();

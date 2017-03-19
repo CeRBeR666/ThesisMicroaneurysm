@@ -14,4 +14,8 @@
         <item>Erkek</item>
         <item>Diğer</item>
     </string-array>
+
+    <string name="title_activity_resim_sec">resimSec</string>
+    <string name="resim_isle">RESMİ İŞLE</string>
+    <string name="title_activity_resim_isle">resimIsle</string>
 </resources>
