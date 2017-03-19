@@ -122,30 +122,32 @@ public class resimIsle extends AppCompatActivity {
 
         Bundle intent = getIntent().getExtras();
         Uri resim_yolu = Uri.parse(intent.getString("resim_yolu"));
-        String type = intent.getString("type");
-
-        if(type.equals("hafizadansec")){
+        String tip = intent.getString("tip");
+        if(tip.equals("kamera")){
+            goz_resim.setImageURI(resim_yolu);
+        }else if(tip.equals("galeri")){
+            Log.e("resim_yolu_galeri",resim_yolu.toString());
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resim_yolu);
                 goz_resim.setImageBitmap(bitmap);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }else if (type.equals("fotografcek")){
-            resim_yolu = Uri.fromFile(new File(resim_yolu.toString()));
-            Log.e("nerdelabu",resim_yolu.toString());
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),resim_yolu);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
         }
 
 
 
 
+
+
+
+
+            /*try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resim_yolu);
+                goz_resim.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
 
     }
 

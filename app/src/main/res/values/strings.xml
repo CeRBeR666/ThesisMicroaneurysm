@@ -18,4 +18,5 @@
     <string name="title_activity_resim_sec">resimSec</string>
     <string name="resim_isle">RESMİ İŞLE</string>
     <string name="title_activity_resim_isle">resimIsle</string>
+    <string name="title_activity_for_fragment">ActivityForFragment</string>
 </resources>

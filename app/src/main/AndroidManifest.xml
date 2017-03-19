@@ -28,7 +28,7 @@
             android:name=".resimIsle"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_resim_isle"
-            android:theme="@style/FullscreenTheme"></activity>
+            android:theme="@style/FullscreenTheme" />
     </application>
 
 </manifest>

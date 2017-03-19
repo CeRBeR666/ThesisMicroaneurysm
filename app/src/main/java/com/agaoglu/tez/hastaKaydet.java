@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,7 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
-
+import java.io.OutputStream;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,11 +53,8 @@ public class hastaKaydet extends Fragment {
     }
 
     private DatabaseReference hastaDB;
-    private static final int REQUEST_CODE = 1;
-    private Bitmap bitmap;
-    private ImageView imageView;
-    private String kullanicisecimi;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private String userChoosenTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,8 +66,6 @@ public class hastaKaydet extends Fragment {
         //Hasta bilgilerini Firebase e yazalım sonra liste yapıp okuyalım.
 
         hastaDB = FirebaseDatabase.getInstance().getReference("hastalar");
-
-
 
         final EditText hastaismi = (EditText) view.findViewById(R.id.isimtxt);
         final EditText hastadogtar = (EditText) view.findViewById(R.id.dogtartxt);
@@ -93,10 +90,38 @@ public class hastaKaydet extends Fragment {
         fotocek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                selectImage();
             }
         });
         return view;
+    }
+
+    private void selectImage() {
+        final CharSequence[] items = { "Fotoğraf Çek", "Hafızadan Seç",
+                "İptal" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Göz resmi ekle");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                boolean result=Util.checkPermission(getActivity());
+
+                if (items[item].equals("Fotoğraf Çek")) {
+                    userChoosenTask ="Fotoğraf Çek";
+                    if(result)
+                        cameraIntent();
+
+                } else if (items[item].equals("Hafızadan Seç")) {
+                    userChoosenTask ="Hafızadan Seç";
+                    if(result)
+                        galleryIntent();
+                } else if (items[item].equals("İptal")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
     }
 
     private void HastaKaydet(String isim, String dogtar, final String adres, String telefon, String cinsiyet){
@@ -147,5 +172,93 @@ public class hastaKaydet extends Fragment {
         }
     }
 
+    private void galleryIntent() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+    }
 
+    private void cameraIntent() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE)
+                onSelectFromGalleryResult(data);
+            else if (requestCode == REQUEST_CAMERA)
+                onCaptureImageResult(data);
+        }
+    }
+
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+
+        File folder = new File(Environment.getExternalStorageDirectory()+ "/" + Environment.DIRECTORY_DCIM + "/Tez");
+        File destination = new File(Environment.getExternalStorageDirectory()+ "/" + Environment.DIRECTORY_DCIM + "/Tez",
+                System.currentTimeMillis() + ".png");
+
+        boolean success = true;
+        if (!folder.exists()) {
+            success = folder.mkdir();
+        }
+        if (success) {
+            FileOutputStream fo;
+            try {
+                destination.createNewFile();
+                fo = new FileOutputStream(destination);
+                fo.write(bytes.toByteArray());
+                fo.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Intent resmi_isle = new Intent(getActivity(),resimIsle.class);
+            resmi_isle.putExtra("tip","kamera");
+            resmi_isle.putExtra("resim_yolu",destination.getAbsolutePath());
+            startActivity(resmi_isle);
+        } else {
+            //Dosyayı yazamadığı durumlar için
+        }
+    }
+
+    private void onSelectFromGalleryResult(Intent data) {
+        Bitmap bm=null;
+        if (data != null) {
+            try {
+                bm = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Intent resmi_isle = new Intent(getActivity(),resimIsle.class);
+            resmi_isle.putExtra("tip","galeri");
+            resmi_isle.putExtra("resim_yolu",data.getData().toString());
+            startActivity(resmi_isle);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case Util.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(userChoosenTask.equals("Fotoğraf Çek"))
+                        cameraIntent();
+                    else if(userChoosenTask.equals("Hafızadan Seç"))
+                        galleryIntent();
+                } else {
+                    //code for deny
+                    //// TODO: 19.03.2017 kullanıcı resim almaya izin vermezse yapılması gerekeni buraya yaz 
+                }
+                break;
+        }
+    }
 }
