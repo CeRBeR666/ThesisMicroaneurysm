@@ -2,10 +2,17 @@ package com.agaoglu.tez;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -47,6 +54,27 @@ public class Util {
             }
         } else {
             return true;
+        }
+    }
+
+    public static Uri getImageContentUri(Context context, String absPath) {
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                , new String[] { MediaStore.Images.Media._ID }
+                , MediaStore.Images.Media.DATA + "=? "
+                , new String[] { absPath }, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI , Integer.toString(id));
+
+        } else if (!absPath.isEmpty()) {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DATA, absPath);
+            return context.getContentResolver().insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        } else {
+            return null;
         }
     }
 }

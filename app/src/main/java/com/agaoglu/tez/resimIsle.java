@@ -1,9 +1,17 @@
 package com.agaoglu.tez;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,10 +19,22 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -91,6 +111,8 @@ public class resimIsle extends AppCompatActivity {
     };
 
     private ImageView goz_resim;
+    private Uri resim_yolu= null;
+    private DatabaseReference tetkikDB;
 
 
     @Override
@@ -102,6 +124,7 @@ public class resimIsle extends AppCompatActivity {
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
+        tetkikDB = FirebaseDatabase.getInstance().getReference("tetkikler");
 
         goz_resim = (ImageView) findViewById(R.id.goz_resim_view);
 
@@ -119,35 +142,72 @@ public class resimIsle extends AppCompatActivity {
         findViewById(R.id.resmi_isle_button).setOnTouchListener(mDelayHideTouchListener);
 
         //Yukardaki sınıfların hepsi otomatik oluşturuldu bu kısımdan sonrası benim eklediklerim
+        //Diğer aktiveteden gelen kısım burası
+        final Bundle intent = getIntent().getExtras();
 
-        Bundle intent = getIntent().getExtras();
-        Uri resim_yolu = Uri.parse(intent.getString("resim_yolu"));
         String tip = intent.getString("tip");
+        final String hastaID = intent.getString("hastaID");
+
+        //Burada bir problem yaşıyorum kameradan resim çekince content:// etiketiyle vermiyordur bende böyle bir fix yazdım
+        //Gelecekte şayet kameranın content olarak nasıl olduğunu bulabilirsem burdaki if i silerim
         if(tip.equals("kamera")){
-            goz_resim.setImageURI(resim_yolu);
-        }else if(tip.equals("galeri")){
-            Log.e("resim_yolu_galeri",resim_yolu.toString());
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resim_yolu);
-                goz_resim.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            resim_yolu = Util.getImageContentUri(getApplicationContext(),intent.getString("resim_yolu"));
+        }else{
+            resim_yolu = Uri.parse(intent.getString("resim_yolu"));
         }
 
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),resim_yolu);
+            goz_resim.setImageBitmap(bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //Diğer aktiveteden gelen kısım burası
 
+        Button resimislebtn = (Button) findViewById(R.id.resmi_isle_button);
+        resimislebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //İlk önce resmimizi google sunucularına yollayalım.
+                // FIXME: 19.03.2017 Yaparken farkettim dosya isimlerini sadece çekilen resimden aldım online bi sistem olduğu için çakışabilir bunu unique hale getirmek lazım onuda Auth classı ile yapacam
+                FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+                StorageReference storageReference = firebaseStorage.getReference().child("gozresimleri").child(resim_yolu.getLastPathSegment());
+                final ProgressDialog progressDialog = new ProgressDialog(resimIsle.this);
+                progressDialog.setTitle("Yükleniyor + Analiz Ediliyor");
+                progressDialog.show();
 
+                storageReference.putFile(resim_yolu).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
+                        progressDialog.dismiss();
+                        tetkikKaydet(hastaID,String.valueOf(taskSnapshot.getDownloadUrl()));
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                    }
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        //calculating progress percentage
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                        //displaying percentage in progress dialog
+                        progressDialog.setMessage(((int) progress) + "%..." + "Yüklendi ");
+                    }
+                });
+            }
+        });
+    }
 
-
-
-
-            /*try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resim_yolu);
-                goz_resim.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
+    private void tetkikKaydet(String hastaID, String tetkikPath){
+        final tetkik tetkik = new tetkik();
+        tetkik.setHastaID(hastaID);
+        tetkik.setTetkikpath(tetkikPath);
+        String tetkikID = tetkikDB.push().getKey();
+        tetkikDB.child(tetkikID).setValue(tetkik);
+        //// TODO: 19.03.2017 Listener eklemedim hata vereceğini düşünmüyorum verirse sebebine bakarız.
 
     }
 

@@ -55,6 +55,7 @@ public class hastaKaydet extends Fragment {
     private DatabaseReference hastaDB;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     private String userChoosenTask;
+    private String hastaID;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,7 +91,13 @@ public class hastaKaydet extends Fragment {
         fotocek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectImage();
+                if(hastaismi.getText().toString().length() == 0){
+                    hastaismi.setError("Hasta İsmini Girmelisiniz.");
+                }
+                else{
+                    HastaKaydet(hastaismi.getText().toString(),hastadogtar.getText().toString(),hastaadres.getText().toString(),hastatelefon.getText().toString(),cinsiyet.getItemAtPosition(cinsiyet.getSelectedItemPosition()).toString());
+                    selectImage();
+                }
             }
         });
         return view;
@@ -137,13 +144,13 @@ public class hastaKaydet extends Fragment {
         }
 
         //Bir primary key alıyoruz
-        String hastaid = hastaDB.push().getKey();
+        hastaID = hastaDB.push().getKey();
         //Primary key le birlikte hasta class ında tuttuğum datayı internete basıyoruz
-        hastaDB.child(hastaid).setValue(hasta);
+        hastaDB.child(hastaID).setValue(hasta);
 
         //Data doğru basıldı mı kontrol ediyoruz
         //Dikkat edilmesi gereken husus child parametresi vermezsen tüm databasi getiriyor
-        hastaDB.child(hastaid).addListenerForSingleValueEvent(new ValueEventListener() {
+        hastaDB.child(hastaID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 hasta kayit = dataSnapshot.getValue(hasta.class);
@@ -224,6 +231,7 @@ public class hastaKaydet extends Fragment {
             Intent resmi_isle = new Intent(getActivity(),resimIsle.class);
             resmi_isle.putExtra("tip","kamera");
             resmi_isle.putExtra("resim_yolu",destination.getAbsolutePath());
+            resmi_isle.putExtra("hastaID",hastaID);
             startActivity(resmi_isle);
         } else {
             //Dosyayı yazamadığı durumlar için
@@ -241,6 +249,7 @@ public class hastaKaydet extends Fragment {
             Intent resmi_isle = new Intent(getActivity(),resimIsle.class);
             resmi_isle.putExtra("tip","galeri");
             resmi_isle.putExtra("resim_yolu",data.getData().toString());
+            resmi_isle.putExtra("hastaID",hastaID);
             startActivity(resmi_isle);
         }
     }
