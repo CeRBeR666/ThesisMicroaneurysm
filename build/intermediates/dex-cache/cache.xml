@@ -3,29 +3,11 @@
 
     <item
         is-multidex="true"
-        jar="C:\Users\Volkan\.android\build-cache\5101cc623619266d271d0060fb9e6502ce29661a\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.2"
-        sha1="48532a016bb0dfbe7970c147ce784598a515406b">
-        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c2ac23d1789de0c259996bd08365f8008f72af68\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Volkan\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\glide\3.7.0\9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4\glide-3.7.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.2"
-        sha1="9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4">
-        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10\glide-3.7.0_05b91d675dd60d98fabf0d755ab6b582139e2430\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="d83bf13930423ad40769e08a3375b4be83a750dd">
+        sha1="abecc6be08d2c56f761a303eb59179ac65158a87">
         <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_0c91c3d7972dc21590c97fee00b6ff650939e3b7\classes.dex" />
     </item>
     <item
@@ -45,6 +27,24 @@
         revision="25.0.2"
         sha1="c82741bc129dd5f99f11a4ab8666ae24262053b6">
         <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_64e18e56d5ced0bbe062218a0afb226c18bc288f\classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Volkan\.android\build-cache\5101cc623619266d271d0060fb9e6502ce29661a\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="48532a016bb0dfbe7970c147ce784598a515406b">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\pre-dexed\debug\classes_c2ac23d1789de0c259996bd08365f8008f72af68.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Volkan\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\glide\3.7.0\9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4\glide-3.7.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4">
+        <dex dex="C:\Users\Volkan\AndroidStudioProjects\Tez\app\build\intermediates\pre-dexed\debug\glide-3.7.0_05b91d675dd60d98fabf0d755ab6b582139e2430.jar" />
     </item>
     <item
         is-multidex="false"

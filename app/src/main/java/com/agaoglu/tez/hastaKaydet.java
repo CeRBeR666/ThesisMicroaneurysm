@@ -18,6 +18,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,6 +59,7 @@ public class hastaKaydet extends Fragment {
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     private String userChoosenTask;
     private String hastaID;
+    private String mCurrentPhotoPath;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -182,14 +186,51 @@ public class hastaKaydet extends Fragment {
     private void galleryIntent() {
         Intent intent = new Intent();
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);//
+        intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
     }
 
     private void cameraIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_CAMERA);
+        if(intent.resolveActivity(getActivity().getPackageManager())!=null){
+            File photofile = null;
+            try {
+                photofile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(photofile != null){
+                Uri photoURI = FileProvider.getUriForFile(getActivity().getApplicationContext(),"com.agaoglu.tez.fileprovider",photofile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(intent, REQUEST_CAMERA);
+            }
+        }
     }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+
+        Intent resmi_isle = new Intent(getActivity(),resimIsle.class);
+        resmi_isle.putExtra("tip","kamera");
+        resmi_isle.putExtra("resim_yolu",mCurrentPhotoPath);
+        Log.e("yenipath",mCurrentPhotoPath);
+        resmi_isle.putExtra("hastaID",hastaID);
+        startActivity(resmi_isle);
+        return image;
+    }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -197,44 +238,6 @@ public class hastaKaydet extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_FILE)
                 onSelectFromGalleryResult(data);
-            else if (requestCode == REQUEST_CAMERA)
-                onCaptureImageResult(data);
-        }
-    }
-
-    private void onCaptureImageResult(Intent data) {
-        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-
-        File folder = new File(Environment.getExternalStorageDirectory()+ "/" + Environment.DIRECTORY_DCIM + "/Tez");
-        File destination = new File(Environment.getExternalStorageDirectory()+ "/" + Environment.DIRECTORY_DCIM + "/Tez",
-                System.currentTimeMillis() + ".png");
-
-        boolean success = true;
-        if (!folder.exists()) {
-            success = folder.mkdir();
-        }
-        if (success) {
-            FileOutputStream fo;
-            try {
-                destination.createNewFile();
-                fo = new FileOutputStream(destination);
-                fo.write(bytes.toByteArray());
-                fo.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Intent resmi_isle = new Intent(getActivity(),resimIsle.class);
-            resmi_isle.putExtra("tip","kamera");
-            resmi_isle.putExtra("resim_yolu",destination.getAbsolutePath());
-            resmi_isle.putExtra("hastaID",hastaID);
-            startActivity(resmi_isle);
-        } else {
-            //Dosyayı yazamadığı durumlar için
         }
     }
 
@@ -265,7 +268,7 @@ public class hastaKaydet extends Fragment {
                         galleryIntent();
                 } else {
                     //code for deny
-                    //// TODO: 19.03.2017 kullanıcı resim almaya izin vermezse yapılması gerekeni buraya yaz 
+                    //// TODO: 19.03.2017 kullanıcı resim almaya izin vermezse yapılması gerekeni buraya yaz
                 }
                 break;
         }
