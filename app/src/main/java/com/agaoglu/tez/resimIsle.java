@@ -2,14 +2,8 @@ package com.agaoglu.tez;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -24,17 +18,17 @@ import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.FileDescriptor;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -113,6 +107,7 @@ public class resimIsle extends AppCompatActivity {
     private ImageView goz_resim;
     private Uri resim_yolu= null;
     private DatabaseReference tetkikDB;
+    private DatabaseReference hastaDB;
 
 
     @Override
@@ -125,6 +120,7 @@ public class resimIsle extends AppCompatActivity {
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         tetkikDB = FirebaseDatabase.getInstance().getReference("tetkikler");
+        hastaDB = FirebaseDatabase.getInstance().getReference("hastalar");
 
         goz_resim = (ImageView) findViewById(R.id.goz_resim_view);
 
@@ -169,7 +165,6 @@ public class resimIsle extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //İlk önce resmimizi google sunucularına yollayalım.
-                // FIXME: 19.03.2017 Yaparken farkettim dosya isimlerini sadece çekilen resimden aldım online bi sistem olduğu için çakışabilir bunu unique hale getirmek lazım onuda Auth classı ile yapacam
                 FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
                 StorageReference storageReference = firebaseStorage.getReference().child("gozresimleri").child(resim_yolu.getLastPathSegment());
                 final ProgressDialog progressDialog = new ProgressDialog(resimIsle.this);
@@ -203,9 +198,9 @@ public class resimIsle extends AppCompatActivity {
 
     private void tetkikKaydet(String hastaID, String tetkikPath){
         final tetkik tetkik = new tetkik();
-        tetkik.setHastaID(hastaID);
-        tetkik.setTetkikpath(tetkikPath);
         String tetkikID = tetkikDB.push().getKey();
+        tetkik.setHastaID(hastaID);
+        tetkik.settetkikPath(tetkikPath);
         tetkikDB.child(tetkikID).setValue(tetkik);
         //// TODO: 19.03.2017 Listener eklemedim hata vereceğini düşünmüyorum verirse sebebine bakarız.
 
@@ -228,6 +223,8 @@ public class resimIsle extends AppCompatActivity {
             show();
         }
     }
+
+
 
     private void hide() {
         // Hide UI first
