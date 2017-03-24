@@ -1,9 +1,6 @@
 package com.agaoglu.tez;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -12,14 +9,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -51,8 +46,9 @@ public class hastaSec extends Fragment {
         kayitlar = new ArrayList<>();
         hastaDB = FirebaseDatabase.getInstance().getReference("hastalar");
 
+
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.hastaseclist);
-        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshhasta);
         final hastasecadapter adapter = new hastasecadapter(kayitlar, getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -68,6 +64,7 @@ public class hastaSec extends Fragment {
                 if (dataSnapshot != null && dataSnapshot.getValue() != null) {
                     hasta hasta = dataSnapshot.getValue(com.agaoglu.tez.hasta.class);
                     adapter.insert(0,hasta);
+                    adapter.notifyDataSetChanged();
                 }
             }
 

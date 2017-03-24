@@ -108,6 +108,7 @@ public class resimIsle extends AppCompatActivity {
     private Uri resim_yolu= null;
     private DatabaseReference tetkikDB;
     private DatabaseReference hastaDB;
+    private String hastaisim;
 
 
     @Override
@@ -201,10 +202,12 @@ public class resimIsle extends AppCompatActivity {
         String tetkikID = tetkikDB.push().getKey();
         tetkik.setHastaID(hastaID);
         tetkik.settetkikPath(tetkikPath);
+        tetkik.setHastaad("Hasta İsim");
         tetkikDB.child(tetkikID).setValue(tetkik);
         //// TODO: 19.03.2017 Listener eklemedim hata vereceğini düşünmüyorum verirse sebebine bakarız.
-
     }
+
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

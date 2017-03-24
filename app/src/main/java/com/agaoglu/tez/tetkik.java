@@ -6,15 +6,19 @@ package com.agaoglu.tez;
 
 public class tetkik {
     public String hastaID;
-    public String tetkikpath;
+    public String tetkikPath;
+    public String diabetoran;
+    public String hastaad;
 
     public tetkik(){
 
     }
 
-    public tetkik(String hastaID, String tetkikpath) {
+
+
+    public tetkik(String hastaID, String tetkikPath, String hastaad, String diabetoran) {
         this.hastaID = hastaID;
-        this.tetkikpath = tetkikpath;
+        this.tetkikPath = tetkikPath;
     }
 
     public String getHastaID() {
@@ -25,11 +29,27 @@ public class tetkik {
         this.hastaID = hastaID;
     }
 
-    public String getTetkikpath() {
-        return tetkikpath;
+    public String gettetkikPath() {
+        return tetkikPath;
     }
 
-    public void setTetkikpath(String tetkikpath) {
-        this.tetkikpath = tetkikpath;
+    public void settetkikPath(String tetkikPath) {
+        this.tetkikPath = tetkikPath;
+    }
+
+    public String getDiabetoran() {
+        return diabetoran;
+    }
+
+    public void setDiabetoran(String diabetoran) {
+        this.diabetoran = diabetoran;
+    }
+
+    public String getHastaad() {
+        return hastaad;
+    }
+
+    public void setHastaad(String hastaad) {
+        this.hastaad = hastaad;
     }
 }

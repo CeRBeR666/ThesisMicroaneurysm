@@ -58,6 +58,7 @@ public class tetkikler extends Fragment {
                 if (dataSnapshot != null && dataSnapshot.getValue() != null) {
                     tetkik tetkik = dataSnapshot.getValue(com.agaoglu.tez.tetkik.class);
                     adapter.insert(0,tetkik);
+                    adapter.notifyDataSetChanged();
                 }
             }
 
