@@ -2,6 +2,7 @@ package com.agaoglu.tez;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -108,7 +109,6 @@ public class resimIsle extends AppCompatActivity {
     private Uri resim_yolu= null;
     private DatabaseReference tetkikDB;
     private DatabaseReference hastaDB;
-    private String hastaisim;
 
 
     @Override
@@ -152,6 +152,8 @@ public class resimIsle extends AppCompatActivity {
         }else{
             resim_yolu = Uri.parse(intent.getString("resim_yolu"));
         }
+
+        Log.e("resim_yolu",resim_yolu.toString());
 
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),resim_yolu);
@@ -206,8 +208,6 @@ public class resimIsle extends AppCompatActivity {
         tetkikDB.child(tetkikID).setValue(tetkik);
         //// TODO: 19.03.2017 Listener eklemedim hata vereceğini düşünmüyorum verirse sebebine bakarız.
     }
-
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

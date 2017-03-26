@@ -38,6 +38,8 @@ public class AnaSayfa extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    Intent analiz = new Intent(getApplicationContext(),analiz.class);
+                    startActivity(analiz);
                     return true;
                 case R.id.navigation_tetkikler:
                     fragmentTransaction = fragmentManager.beginTransaction();
