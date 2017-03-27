@@ -31,6 +31,7 @@ import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -47,6 +48,14 @@ public class analiz extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analiz);
+
+        //Bug Fix alttaki fonksiyon tamamiyle saçmalık 3_2_0 versiyonunda opencv nin çalışması için eklenmiş bir kod
+        if (!OpenCVLoader.initDebug()) {
+            // Handle initialization error
+        }
+        //Bug Fix
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -165,9 +174,45 @@ public class analiz extends AppCompatActivity
                     Uri selectedImageUri = Uri.parse("content://media/external/images/media/222");
                     selectedImagePath = Util.getPath(analiz.this,selectedImageUri);
                     loadImage(selectedImagePath);
-                    Log.e("her seferinde",selectedImagePath);
+
+                    Mat gray = new Mat();
+                    Imgproc.cvtColor(sampledImage,gray,Imgproc.COLOR_BGR2GRAY);
+                    Imgproc.blur(gray,gray,new Size(3,3));
 
 
+                    Mat edges = new Mat();
+                    double lovthreshold = 18;
+                    double highthreshold = 32;
+
+                    Imgproc.Canny(gray,edges,lovthreshold,highthreshold);
+
+                    Mat lines = new Mat();
+                    Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180 , 50, 50 ,10);
+
+                    for (int i =0; i < lines.cols(); i++){
+                        double[] val = lines.get(0,i);
+                        Imgproc.line(edges, new org.opencv.core.Point(val[0],val[1]), new org.opencv.core.Point(val[2],val[3]), new Scalar(0,0,255), 2);
+                    }
+
+                    Mat nolines = new Mat();
+                    Core.subtract(gray,edges,nolines);
+                    //displayImage(nolines);
+
+                    Mat circles = new Mat();
+                    int minRadius = 8;
+                    int maxRadius = 19;
+                    Imgproc.HoughCircles(nolines,circles, Imgproc.HOUGH_GRADIENT, 1 , minRadius, 120 , 10 , minRadius, maxRadius);
+                    Log.d("deneme",circles.toString());
+
+                    for (int j =0; j < circles.cols(); j++){
+                        double circle[] = circles.get(0,j);
+                        org.opencv.core.Point pt = new org.opencv.core.Point(Math.round(circle[0]),Math.round(circle[1]));
+                        int radius = (int) Math.round(circle[2]);
+
+                        Imgproc.circle(sampledImage, pt, radius, new Scalar(0,255,0), 1);
+                        Imgproc.circle(sampledImage, pt, 3, new Scalar(0,0,255), 1);
+                    }
+                    displayImage(sampledImage);
 
                 }break;
                 default:
