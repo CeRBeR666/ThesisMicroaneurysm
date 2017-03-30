@@ -12,6 +12,8 @@ import android.support.design.widget.Snackbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,6 +25,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ViewFlipper;
+import android.widget.ViewSwitcher;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -38,11 +45,18 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
 
+import static com.agaoglu.tez.R.id.container;
+import static com.agaoglu.tez.R.id.end;
+
 public class analiz extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private String selectedImagePath;
     private Mat sampledImage;
+    protected View view;
+    private ViewFlipper viewFlipper;
+    private float lastX;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +73,6 @@ public class analiz extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -76,7 +82,19 @@ public class analiz extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
+
+        viewFlipper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewFlipper.showNext();
+            }
+        });
+
     }
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -151,15 +169,34 @@ public class analiz extends AppCompatActivity
         Size ratio = new Size(width,height);
 
         Imgproc.resize(rgbImage,sampledImage,ratio,0,0,Imgproc.INTER_AREA);
-        displayImage(sampledImage);
     }
 
-    private void displayImage(Mat image) {
+    private void displayImage(Mat image, int ivID) {
         Bitmap bitmap = Bitmap.createBitmap(image.cols(), image.rows(), Bitmap.Config.RGB_565);
         Utils.matToBitmap(image, bitmap);
 
-        ImageView iv = (ImageView) findViewById(R.id.IODarkRoomImageView);
-        iv.setImageBitmap(bitmap);
+        ImageView iv01 = (ImageView) findViewById(R.id.ilkresim);
+        ImageView iv02 = (ImageView) findViewById(R.id.grikanal);
+        ImageView iv03 = (ImageView) findViewById(R.id.canny);
+        ImageView iv04 = (ImageView) findViewById(R.id.damar);
+        ImageView iv05 = (ImageView) findViewById(R.id.micro);
+
+        switch(ivID){
+            case 1: iv01.setImageBitmap(bitmap);
+                break;
+            case 2: iv02.setImageBitmap(bitmap);
+                break;
+            case 3: iv03.setImageBitmap(bitmap);
+                break;
+            case 4: iv04.setImageBitmap(bitmap);
+                break;
+            case 5: iv05.setImageBitmap(bitmap);
+                break;
+        }
+
+
+
+
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -169,22 +206,25 @@ public class analiz extends AppCompatActivity
                 case LoaderCallbackInterface.SUCCESS:{
                     Log.i("OpencvLoaded ?","Opencv Yüklendi");
 
-
-
                     Uri selectedImageUri = Uri.parse("content://media/external/images/media/222");
                     selectedImagePath = Util.getPath(analiz.this,selectedImageUri);
                     loadImage(selectedImagePath);
+
+                    displayImage(sampledImage,1);
 
                     Mat gray = new Mat();
                     Imgproc.cvtColor(sampledImage,gray,Imgproc.COLOR_BGR2GRAY);
                     Imgproc.blur(gray,gray,new Size(3,3));
 
+                    displayImage(gray,2);
 
                     Mat edges = new Mat();
                     double lovthreshold = 18;
                     double highthreshold = 32;
 
                     Imgproc.Canny(gray,edges,lovthreshold,highthreshold);
+
+                    displayImage(edges,3);
 
                     Mat lines = new Mat();
                     Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180 , 50, 50 ,10);
@@ -196,7 +236,7 @@ public class analiz extends AppCompatActivity
 
                     Mat nolines = new Mat();
                     Core.subtract(gray,edges,nolines);
-                    //displayImage(nolines);
+                    displayImage(nolines,4);
 
                     Mat circles = new Mat();
                     int minRadius = 8;
@@ -212,7 +252,7 @@ public class analiz extends AppCompatActivity
                         Imgproc.circle(sampledImage, pt, radius, new Scalar(0,255,0), 1);
                         Imgproc.circle(sampledImage, pt, 3, new Scalar(0,0,255), 1);
                     }
-                    displayImage(sampledImage);
+                    displayImage(sampledImage,5);
 
                 }break;
                 default:
@@ -227,5 +267,33 @@ public class analiz extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0,this,mLoaderCallback);
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                lastX = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                float currentX = event.getX();
+                if (lastX < currentX){
+                    if (viewFlipper.getDisplayedChild() == 0)
+                        break;
+                    viewFlipper.setInAnimation(this,R.anim.slide_in_from_left);
+                    viewFlipper.setOutAnimation(this,R.anim.slide_out_to_right);
+                    viewFlipper.showNext();
+                }
+                if (lastX > currentX){
+                    if (viewFlipper.getDisplayedChild() == 1)
+                        break;
+                    viewFlipper.setInAnimation(this, R.anim.slide_in_from_right);
+                    viewFlipper.setOutAnimation(this, R.anim.slide_out_to_left);
+                    viewFlipper.showPrevious();
+                }
+                break;
+        }
+        return false;
     }
 }
