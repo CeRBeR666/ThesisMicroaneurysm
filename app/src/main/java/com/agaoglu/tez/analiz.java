@@ -1,18 +1,14 @@
 package com.agaoglu.tez;
 
-import android.content.Intent;
-import android.database.Cursor;
+
 import android.graphics.Bitmap;
-import android.media.ExifInterface;
+
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
-import android.view.LayoutInflater;
+
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -23,13 +19,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ViewFlipper;
-import android.widget.ViewSwitcher;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import android.widget.ImageView;
+import android.widget.NumberPicker;
+import android.widget.TextView;
+import android.widget.ViewFlipper;
+
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
+import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -37,16 +36,13 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
+
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.IOException;
-
-import static com.agaoglu.tez.R.id.container;
-import static com.agaoglu.tez.R.id.end;
+import static com.agaoglu.tez.R.id.houghcircleseekbar;
 
 public class analiz extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,7 +51,11 @@ public class analiz extends AppCompatActivity
     private Mat sampledImage;
     protected View view;
     private ViewFlipper viewFlipper;
+    private CrystalRangeSeekbar cannyrangeSeekbar;
+    private NumberPicker numberPicker;
+    private CrystalSeekbar hougcircleSeekbar;
     private float lastX;
+
 
 
     @Override
@@ -90,6 +90,30 @@ public class analiz extends AppCompatActivity
                 viewFlipper.showNext();
             }
         });
+
+        cannyrangeSeekbar = (CrystalRangeSeekbar) navigationView.getHeaderView(0).findViewById(R.id.cannyseekbar);
+        final TextView tvmin = (TextView) navigationView.getHeaderView(0).findViewById(R.id.cannymintxt);
+        final TextView tvmax = (TextView) navigationView.getHeaderView(0).findViewById(R.id.cannymaxtxt);
+
+        cannyrangeSeekbar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+            @Override
+            public void valueChanged(Number minValue, Number maxValue) {
+                tvmin.setText(minValue.toString());
+                tvmax.setText(maxValue.toString());
+            }
+        });
+
+        hougcircleSeekbar = (CrystalSeekbar) navigationView.getHeaderView(0).findViewById(R.id.houghcircleseekbar);
+        final TextView ctv = (TextView) navigationView.getHeaderView(0).findViewById(R.id.houghcirclemintxt);
+        hougcircleSeekbar.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
+            @Override
+            public void valueChanged(Number value) {
+                ctv.setText(value.toString());
+            }
+        });
+
+
+
 
     }
 
@@ -133,7 +157,7 @@ public class analiz extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        /*
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
@@ -147,7 +171,7 @@ public class analiz extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
-
+        */
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -193,10 +217,6 @@ public class analiz extends AppCompatActivity
             case 5: iv05.setImageBitmap(bitmap);
                 break;
         }
-
-
-
-
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -205,55 +225,7 @@ public class analiz extends AppCompatActivity
             switch (status){
                 case LoaderCallbackInterface.SUCCESS:{
                     Log.i("OpencvLoaded ?","Opencv Yüklendi");
-
-                    Uri selectedImageUri = Uri.parse("content://media/external/images/media/222");
-                    selectedImagePath = Util.getPath(analiz.this,selectedImageUri);
-                    loadImage(selectedImagePath);
-
-                    displayImage(sampledImage,1);
-
-                    Mat gray = new Mat();
-                    Imgproc.cvtColor(sampledImage,gray,Imgproc.COLOR_BGR2GRAY);
-                    Imgproc.blur(gray,gray,new Size(3,3));
-
-                    displayImage(gray,2);
-
-                    Mat edges = new Mat();
-                    double lovthreshold = 18;
-                    double highthreshold = 32;
-
-                    Imgproc.Canny(gray,edges,lovthreshold,highthreshold);
-
-                    displayImage(edges,3);
-
-                    Mat lines = new Mat();
-                    Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180 , 50, 50 ,10);
-
-                    for (int i =0; i < lines.cols(); i++){
-                        double[] val = lines.get(0,i);
-                        Imgproc.line(edges, new org.opencv.core.Point(val[0],val[1]), new org.opencv.core.Point(val[2],val[3]), new Scalar(0,0,255), 2);
-                    }
-
-                    Mat nolines = new Mat();
-                    Core.subtract(gray,edges,nolines);
-                    displayImage(nolines,4);
-
-                    Mat circles = new Mat();
-                    int minRadius = 8;
-                    int maxRadius = 19;
-                    Imgproc.HoughCircles(nolines,circles, Imgproc.HOUGH_GRADIENT, 1 , minRadius, 120 , 10 , minRadius, maxRadius);
-                    Log.d("deneme",circles.toString());
-
-                    for (int j =0; j < circles.cols(); j++){
-                        double circle[] = circles.get(0,j);
-                        org.opencv.core.Point pt = new org.opencv.core.Point(Math.round(circle[0]),Math.round(circle[1]));
-                        int radius = (int) Math.round(circle[2]);
-
-                        Imgproc.circle(sampledImage, pt, radius, new Scalar(0,255,0), 1);
-                        Imgproc.circle(sampledImage, pt, 3, new Scalar(0,0,255), 1);
-                    }
-                    displayImage(sampledImage,5);
-
+                    resmiisle();
                 }break;
                 default:
                 {
@@ -295,5 +267,59 @@ public class analiz extends AppCompatActivity
                 break;
         }
         return false;
+    }
+
+    public void resmiisle(){
+        Uri selectedImageUri = Uri.parse("content://media/external/images/media/222");
+        selectedImagePath = Util.getPath(analiz.this,selectedImageUri);
+        loadImage(selectedImagePath);
+
+        displayImage(sampledImage,1);
+
+        Mat gray = new Mat();
+        Imgproc.cvtColor(sampledImage,gray,Imgproc.COLOR_BGR2GRAY);
+        //Imgproc.blur(gray,gray,new Size(2,2));
+        Imgproc.medianBlur(gray,gray,5);
+
+
+        displayImage(gray,2);
+
+        Mat edges = new Mat();
+        double lovthreshold = 18;
+        double highthreshold = 32;
+
+        Imgproc.Canny(gray,edges,lovthreshold,highthreshold);
+
+        displayImage(edges,3);
+
+        Mat lines = new Mat();
+        Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180 , 50, 50 ,10);
+
+
+
+        for (int i =0; i < lines.cols(); i++){
+            double[] val = lines.get(0,i);
+            Imgproc.line(edges, new org.opencv.core.Point(val[0],val[1]), new org.opencv.core.Point(val[2],val[3]), new Scalar(0,0,255), 2);
+        }
+
+        Mat nolines = new Mat();
+        Core.subtract(gray,edges,nolines);
+        displayImage(nolines,4);
+
+        Mat circles = new Mat();
+        int minRadius = 1;
+        int maxRadius = 10;
+        Imgproc.HoughCircles(nolines,circles, Imgproc.HOUGH_GRADIENT, 1 , minRadius, 60 , 10 , minRadius, maxRadius);
+        Log.d("deneme",circles.toString());
+
+        for (int j =0; j < circles.cols(); j++){
+            double circle[] = circles.get(0,j);
+            org.opencv.core.Point pt = new org.opencv.core.Point(Math.round(circle[0]),Math.round(circle[1]));
+            int radius = (int) Math.round(circle[2]);
+
+            Imgproc.circle(sampledImage, pt, radius, new Scalar(0,255,0), 1);
+            Imgproc.circle(sampledImage, pt, 3, new Scalar(0,0,255), 1);
+        }
+        displayImage(sampledImage,5);
     }
 }
