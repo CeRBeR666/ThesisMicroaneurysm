@@ -237,13 +237,15 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/guncelle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Button"/>
+                android:layout_centerHorizontal="true"
+                android:text="Güncelle"/>
         </RelativeLayout>
 
 

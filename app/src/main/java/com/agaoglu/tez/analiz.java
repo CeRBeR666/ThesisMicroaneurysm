@@ -1,6 +1,7 @@
 package com.agaoglu.tez;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 
 import android.net.Uri;
@@ -20,15 +21,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
+
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+
+
 
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
+import com.shawnlin.numberpicker.NumberPicker;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -42,7 +47,7 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import static com.agaoglu.tez.R.id.houghcircleseekbar;
+
 
 public class analiz extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,6 +60,8 @@ public class analiz extends AppCompatActivity
     private NumberPicker numberPicker;
     private CrystalSeekbar hougcircleSeekbar;
     private float lastX;
+    private Button guncelle;
+    private String resim_yolu;
 
 
 
@@ -62,6 +69,12 @@ public class analiz extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analiz);
+        setTitle("Görüntü Analizi");
+
+        Intent i = getIntent();
+        resim_yolu = i.getStringExtra("resim_yolu");
+
+        Log.e("resimdanası2",resim_yolu);
 
         //Bug Fix alttaki fonksiyon tamamiyle saçmalık 3_2_0 versiyonunda opencv nin çalışması için eklenmiş bir kod
         if (!OpenCVLoader.initDebug()) {
@@ -80,7 +93,7 @@ public class analiz extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
 
@@ -112,13 +125,27 @@ public class analiz extends AppCompatActivity
             }
         });
 
+        guncelle = (Button) navigationView.getHeaderView(0).findViewById(R.id.guncelle);
+        guncelle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Şimdi değerleri getirelim.
+                int canymin = Integer.valueOf(tvmin.getText().toString());
+                int canymax = Integer.valueOf(tvmax.getText().toString());
+                NumberPicker numberPicker1 = (NumberPicker) navigationView.getHeaderView(0).findViewById(R.id.houglinetreshnumber);
+                int houglinethres = numberPicker1.getValue();
+                NumberPicker numberPicker2 = (NumberPicker) navigationView.getHeaderView(0).findViewById(R.id.houglinedotnumber);
+                int houglinedot = numberPicker2.getValue();
+                NumberPicker numberPicker3 = (NumberPicker) navigationView.getHeaderView(0).findViewById(R.id.houglinespacenumber);
+                int houglinespace = numberPicker3.getValue();
+                int hougcirclethres = Integer.valueOf(ctv.getText().toString());
 
 
 
+                resmiisle(canymin,canymax,houglinethres,houglinedot,houglinespace,hougcirclethres,resim_yolu);
+            }
+        });
     }
-
-
-
 
     @Override
     public void onBackPressed() {
@@ -225,7 +252,7 @@ public class analiz extends AppCompatActivity
             switch (status){
                 case LoaderCallbackInterface.SUCCESS:{
                     Log.i("OpencvLoaded ?","Opencv Yüklendi");
-                    resmiisle();
+                    resmiisle(0,0,0,0,0,0,resim_yolu);
                 }break;
                 default:
                 {
@@ -269,8 +296,15 @@ public class analiz extends AppCompatActivity
         return false;
     }
 
-    public void resmiisle(){
-        Uri selectedImageUri = Uri.parse("content://media/external/images/media/222");
+    public void resmiisle(int canymin, int canymax, int houglinethres, int houglinedot, int houglinespace, int hougcirclethres, String path){
+        canymin = canymin != 0 ? canymin : 18;
+        canymax = canymax != 0 ? canymax : 32;
+        houglinethres = houglinethres != 0 ? houglinethres : 100;
+        houglinedot = houglinedot != 0 ? houglinedot : 100;
+        houglinespace = houglinespace != 0 ? houglinespace : 50;
+        hougcirclethres = hougcirclethres != 0 ? hougcirclethres : 60;
+
+        Uri selectedImageUri = Uri.parse(path);
         selectedImagePath = Util.getPath(analiz.this,selectedImageUri);
         loadImage(selectedImagePath);
 
@@ -285,17 +319,13 @@ public class analiz extends AppCompatActivity
         displayImage(gray,2);
 
         Mat edges = new Mat();
-        double lovthreshold = 18;
-        double highthreshold = 32;
 
-        Imgproc.Canny(gray,edges,lovthreshold,highthreshold);
+        Imgproc.Canny(gray,edges,canymin,canymax);
 
         displayImage(edges,3);
 
         Mat lines = new Mat();
-        Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180 , 50, 50 ,10);
-
-
+        Imgproc.HoughLinesP(edges, lines, 1, Math.PI / 180 , houglinethres, houglinedot ,houglinespace);
 
         for (int i =0; i < lines.cols(); i++){
             double[] val = lines.get(0,i);
@@ -309,7 +339,7 @@ public class analiz extends AppCompatActivity
         Mat circles = new Mat();
         int minRadius = 1;
         int maxRadius = 10;
-        Imgproc.HoughCircles(nolines,circles, Imgproc.HOUGH_GRADIENT, 1 , minRadius, 60 , 10 , minRadius, maxRadius);
+        Imgproc.HoughCircles(nolines,circles, Imgproc.HOUGH_GRADIENT, 1 , minRadius, hougcirclethres , 10 , minRadius, maxRadius);
         Log.d("deneme",circles.toString());
 
         for (int j =0; j < circles.cols(); j++){

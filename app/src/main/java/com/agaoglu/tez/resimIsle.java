@@ -2,6 +2,7 @@ package com.agaoglu.tez;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -180,6 +181,12 @@ public class resimIsle extends AppCompatActivity {
 
                         progressDialog.dismiss();
                         tetkikKaydet(hastaID,String.valueOf(taskSnapshot.getDownloadUrl()));
+                        //Resmi analiz etme aktivitesine geçelim
+
+                        Intent i = new Intent(getApplicationContext(),analiz.class);
+                        i.putExtra("resim_yolu",resim_yolu.toString());
+                        startActivity(i);
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
