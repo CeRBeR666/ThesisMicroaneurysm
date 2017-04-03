@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "124930725265-jd0ehrl7stlri7ch3vlaekbtnrtr7lh7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.agaoglu.tez",
+            "certificate_hash": "5af25fcc48aa3aa0e2c011911cbe8bad9ad00fa0"
+          }
+        },
+        {
           "client_id": "124930725265-e3nlim8mv8gv7inor55qbgg5bsscr1oe.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

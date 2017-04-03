@@ -11,14 +11,15 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        card_view:cardCornerRadius="4dp"
+        card_view:cardCornerRadius="5dp"
         app:cardUseCompatPadding="true"
         android:layout_margin="5dp"
         >
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="?android:selectableItemBackground">
 
             <TextView
                 android:id="@+id/item_hastaisim"
@@ -27,7 +28,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:text="TextView"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                />
 
             <TextView
                 android:id="@+id/item_hastacinsiyet"
@@ -35,7 +37,9 @@
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="5dp"/>
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/item_hastaisim"
+                />
 
             <TextView
                 android:id="@+id/item_dogumtarih"
@@ -43,8 +47,9 @@
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="5dp"/>
-        </LinearLayout>
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/item_hastacinsiyet"/>
+        </RelativeLayout>
 
 
     </android.support.v7.widget.CardView>

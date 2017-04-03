@@ -31,6 +31,9 @@ public class hastasecadapter extends RecyclerView.Adapter<hastasecholder> {
     @Override
     public hastasecholder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.hastaitem, parent, false);
+
+        v.setOnLongClickListener(hastaSec.myLongClickListener);
+
         hastasecholder holder = new hastasecholder(v);
         return holder;
     }
@@ -40,6 +43,8 @@ public class hastasecadapter extends RecyclerView.Adapter<hastasecholder> {
         holder.hastaisim.setText(list.get(position).getIsim());
         holder.hastacinsiyet.setText(list.get(position).getCinsiyet());
         holder.hastadogtar.setText(list.get(position).getDogtar());
+
+
 
     }
 
