@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -106,7 +107,7 @@ public class resimIsle extends AppCompatActivity {
         }
     };
 
-    private ImageView goz_resim;
+    private PhotoView goz_resim;
     private Uri resim_yolu= null;
     private DatabaseReference tetkikDB;
     private DatabaseReference hastaDB;
@@ -124,7 +125,7 @@ public class resimIsle extends AppCompatActivity {
         tetkikDB = FirebaseDatabase.getInstance().getReference("tetkikler");
         hastaDB = FirebaseDatabase.getInstance().getReference("hastalar");
 
-        goz_resim = (ImageView) findViewById(R.id.goz_resim_view);
+        goz_resim = (PhotoView) findViewById(R.id.goz_resim_view);
 
         // Set up the user interaction to manually show or hide the system UI.
         goz_resim.setOnClickListener(new View.OnClickListener() {

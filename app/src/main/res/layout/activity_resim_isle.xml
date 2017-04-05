@@ -9,13 +9,14 @@
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
-    <ImageView
+
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/goz_resim_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:keepScreenOn="true"
-        app:srcCompat="@color/colorPrimaryDark" />
+        app:srcCompat="@color/colorPrimaryDark"/>
 
 
 

@@ -33,6 +33,7 @@ import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.shawnlin.numberpicker.NumberPicker;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -55,7 +56,6 @@ public class analiz extends AppCompatActivity
     private String selectedImagePath;
     private Mat sampledImage;
     protected View view;
-    private ViewFlipper viewFlipper;
     private CrystalRangeSeekbar cannyrangeSeekbar;
     private NumberPicker numberPicker;
     private CrystalSeekbar hougcircleSeekbar;
@@ -95,14 +95,6 @@ public class analiz extends AppCompatActivity
 
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        viewFlipper = (ViewFlipper) findViewById(R.id.viewflipper);
-
-        viewFlipper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewFlipper.showNext();
-            }
-        });
 
         cannyrangeSeekbar = (CrystalRangeSeekbar) navigationView.getHeaderView(0).findViewById(R.id.cannyseekbar);
         final TextView tvmin = (TextView) navigationView.getHeaderView(0).findViewById(R.id.cannymintxt);
@@ -226,11 +218,11 @@ public class analiz extends AppCompatActivity
         Bitmap bitmap = Bitmap.createBitmap(image.cols(), image.rows(), Bitmap.Config.RGB_565);
         Utils.matToBitmap(image, bitmap);
 
-        ImageView iv01 = (ImageView) findViewById(R.id.ilkresim);
-        ImageView iv02 = (ImageView) findViewById(R.id.grikanal);
-        ImageView iv03 = (ImageView) findViewById(R.id.canny);
-        ImageView iv04 = (ImageView) findViewById(R.id.damar);
-        ImageView iv05 = (ImageView) findViewById(R.id.micro);
+        PhotoView iv01 = (PhotoView) findViewById(R.id.ilkresim);
+        PhotoView  iv02 = (PhotoView) findViewById(R.id.grikanal);
+        PhotoView  iv03 = (PhotoView) findViewById(R.id.canny);
+        PhotoView  iv04 = (PhotoView) findViewById(R.id.damar);
+        PhotoView  iv05 = (PhotoView) findViewById(R.id.micro);
 
         switch(ivID){
             case 1: iv01.setImageBitmap(bitmap);
@@ -266,34 +258,6 @@ public class analiz extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0,this,mLoaderCallback);
-    }
-
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                lastX = event.getX();
-                break;
-            case MotionEvent.ACTION_UP:
-                float currentX = event.getX();
-                if (lastX < currentX){
-                    if (viewFlipper.getDisplayedChild() == 0)
-                        break;
-                    viewFlipper.setInAnimation(this,R.anim.slide_in_from_left);
-                    viewFlipper.setOutAnimation(this,R.anim.slide_out_to_right);
-                    viewFlipper.showNext();
-                }
-                if (lastX > currentX){
-                    if (viewFlipper.getDisplayedChild() == 1)
-                        break;
-                    viewFlipper.setInAnimation(this, R.anim.slide_in_from_right);
-                    viewFlipper.setOutAnimation(this, R.anim.slide_out_to_left);
-                    viewFlipper.showPrevious();
-                }
-                break;
-        }
-        return false;
     }
 
     public void resmiisle(int canymin, int canymax, int houglinethres, int houglinedot, int houglinespace, int hougcirclethres, String path){
