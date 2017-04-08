@@ -12,7 +12,32 @@
 
     <com.agaoglu.tez.HackyViewPager
         android:id="@+id/view_pager"
+        android:layout_width="0dp"
+        android:layout_height="495dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="fitXY"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp"/>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="20dp"
+        android:gravity="bottom|center">
+
+        <com.badoualy.stepperindicator.StepperIndicator
+            android:id="@+id/indicator"
+            android:layout_width="344dp"
+            android:layout_height="wrap_content"
+            app:stpi_showDoneIcon="true"
+            app:stpi_showStepNumberInstead="true"
+            app:stpi_stepCount="5"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="0dp"
+            />
+    </RelativeLayout>
+
 
 </android.support.constraint.ConstraintLayout>

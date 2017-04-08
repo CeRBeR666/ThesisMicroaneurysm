@@ -4,32 +4,27 @@ package com.agaoglu.tez;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-
 import android.net.Uri;
 import android.os.Bundle;
-
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.DisplayMetrics;
-import android.util.Log;
-
-import android.view.LayoutInflater;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
 import android.widget.TextView;
 
-
+import com.badoualy.stepperindicator.StepperIndicator;
 import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
@@ -43,7 +38,6 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -55,17 +49,36 @@ import java.util.ArrayList;
 public class analiz extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    protected View view;
     private String selectedImagePath;
     private Mat sampledImage;
-    protected View view;
     private CrystalRangeSeekbar cannyrangeSeekbar;
     private NumberPicker numberPicker;
     private CrystalSeekbar hougcircleSeekbar;
     private float lastX;
     private Button guncelle;
     private String resim_yolu;
-
-
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS: {
+                    Log.i("OpencvLoaded ?", "Opencv Yüklendi");
+                    resmiisle(0, 0, 0, 0, 0, 0, resim_yolu);
+                    ViewPager viewPager = (HackyViewPager) findViewById(R.id.view_pager);
+                    StepperIndicator indicator = (StepperIndicator) findViewById(R.id.indicator);
+                    viewPager.setAdapter(new AnalizAdapter(getApplicationContext()));
+                    indicator.setViewPager(viewPager);
+                    indicator.setStepCount(5);
+                }
+                break;
+                default: {
+                    super.onManagerConnected(status);
+                }
+                break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,17 +89,11 @@ public class analiz extends AppCompatActivity
         Intent i = getIntent();
         resim_yolu = i.getStringExtra("resim_yolu");
 
-
-        ViewPager viewPager = (HackyViewPager) findViewById(R.id.view_pager);
-        viewPager.setAdapter(new AnalizAdapter(this));
-
-
         //Bug Fix alttaki fonksiyon tamamiyle saçmalık 3_2_0 versiyonunda opencv nin çalışması için eklenmiş bir kod
         if (!OpenCVLoader.initDebug()) {
             // Handle initialization error
         }
         //Bug Fix
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -138,6 +145,7 @@ public class analiz extends AppCompatActivity
                 int hougcirclethres = Integer.valueOf(ctv.getText().toString());
 
                 resmiisle(canymin,canymax,houglinethres,houglinedot,houglinespace,hougcirclethres,resim_yolu);
+
             }
         });
     }
@@ -199,26 +207,6 @@ public class analiz extends AppCompatActivity
         return true;
     }
 
-
-
-
-
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status){
-                case LoaderCallbackInterface.SUCCESS:{
-                    Log.i("OpencvLoaded ?","Opencv Yüklendi");
-                    resmiisle(0,0,0,0,0,0,resim_yolu);
-                }break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                }break;
-            }
-        }
-    };
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -241,9 +229,7 @@ public class analiz extends AppCompatActivity
 
         Mat gray = new Mat();
         Imgproc.cvtColor(sampledImage,gray,Imgproc.COLOR_BGR2GRAY);
-        //Imgproc.blur(gray,gray,new Size(2,2));
         Imgproc.medianBlur(gray,gray,5);
-
 
         addImage(gray);
 
@@ -269,8 +255,6 @@ public class analiz extends AppCompatActivity
         int minRadius = 1;
         int maxRadius = 10;
         Imgproc.HoughCircles(nolines,circles, Imgproc.HOUGH_GRADIENT, 1 , minRadius, hougcirclethres , 10 , minRadius, maxRadius);
-        Log.d("deneme",circles.toString());
-
         for (int j =0; j < circles.cols(); j++){
             double circle[] = circles.get(0,j);
             org.opencv.core.Point pt = new org.opencv.core.Point(Math.round(circle[0]),Math.round(circle[1]));
@@ -280,9 +264,6 @@ public class analiz extends AppCompatActivity
             Imgproc.circle(sampledImage, pt, 3, new Scalar(0,0,255), 1);
         }
         addImage(sampledImage);
-
-
-
     }
 
     private void loadImage(String path) {
@@ -309,40 +290,30 @@ public class analiz extends AppCompatActivity
 
     static class AnalizAdapter extends PagerAdapter {
 
+        private static final ArrayList<Bitmap> sonuclar = new ArrayList<Bitmap>();
         Context mContext;
         LayoutInflater mLayoutInflater;
-        private ArrayList<Bitmap> sonuclar = new ArrayList<Bitmap>();
 
 
         public AnalizAdapter(Context context) {
             mContext = context;
             mLayoutInflater = LayoutInflater.from(mContext);
-
         }
 
         public void addItem(final Bitmap resim){
             sonuclar.add(resim);
-            Log.e("sonuclar",sonuclar.toString());
             notifyDataSetChanged();
         }
 
-
-        private static final int[] sDrawables = { R.drawable.patient_eye, R.drawable.retina_ready_icon, R.drawable.thumb};
-
-
         @Override
         public int getCount() {
-            //return sonuclar.size();
-            return sDrawables.length;
+            return 5;
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             PhotoView photoView = new PhotoView(container.getContext());
-            photoView.setImageResource(sDrawables[position]);
-            Log.e("pozisyon",String.valueOf(position));
-//            Log.e("sonuc",sonuclar.get(0).toString());
-            //photoView.setImageBitmap(sonuclar.get(position));
+            photoView.setImageBitmap(sonuclar.get(position));
             container.addView(photoView, ViewPager.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT);
             return photoView;
         }
