@@ -148,6 +148,8 @@ public class analiz extends AppCompatActivity
 
             }
         });
+
+
     }
 
     @Override
@@ -164,6 +166,7 @@ public class analiz extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.analiz, menu);
+
         return true;
     }
 
@@ -262,6 +265,10 @@ public class analiz extends AppCompatActivity
 
             Imgproc.circle(sampledImage, pt, radius, new Scalar(0,255,0), 1);
             Imgproc.circle(sampledImage, pt, 3, new Scalar(0,0,255), 1);
+            Log.e("circle.cols", String.valueOf(circles.cols()));
+            Log.e("circle0", String.valueOf(circle[0]));
+            Log.e("circle1", String.valueOf(circle[1]));
+            Log.e("circle2", String.valueOf(circle[2]));
         }
         addImage(sampledImage);
     }

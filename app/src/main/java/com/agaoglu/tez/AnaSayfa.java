@@ -7,11 +7,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -38,8 +35,8 @@ public class AnaSayfa extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    Intent analiz = new Intent(getApplicationContext(),analiz.class);
-                    startActivity(analiz);
+                    Intent analiz_kaydet = new Intent(getApplicationContext(), sonuclar.class);
+                    startActivity(analiz_kaydet);
                     return true;
                 case R.id.navigation_tetkikler:
                     fragmentTransaction = fragmentManager.beginTransaction();

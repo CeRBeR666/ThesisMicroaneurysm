@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.agaoglu.tez">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.agaoglu.tez">
 
     <!-- To access Google+ APIs: -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
-    <uses-feature android:name="android.hardware.camera" android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true"/>
     <uses-feature android:name="android.hardware.camera.autofocus"/>
     <uses-feature android:name="android.hardware.camera.front"/>
     <uses-feature android:name="android.hardware.camera.front.autofocus"/>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
 
     <application
         android:allowBackup="true"
@@ -49,6 +51,11 @@
         <activity
             android:name=".analiz"
             android:label="@string/title_activity_analiz"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".sonuclar"
+            android:label="@string/title_activity_sonuclar"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
